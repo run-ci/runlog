@@ -1,0 +1,11 @@
+---
+version: "3"
+
+services:
+  logstash:
+    image: docker.elastic.co/logstash/logstash:6.4.2
+    volumes:
+    - "./logstash/pipeline/:/usr/share/logstash/pipeline/"
+    - "./logstash/tasklog/:/var/run/run-ci/tasklog/"
+    ports:
+    - "12345:12345"
