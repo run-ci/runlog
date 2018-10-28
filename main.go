@@ -1,23 +1,57 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
+
+	"github.com/juicemia/log"
+	"github.com/run-ci/runlog/http"
 )
 
+var quser, qpass string
+var logger *log.Logger
+
+func init() {
+	log.SetLevelFromEnv("RUNLOG_LOG_LEVEL")
+	logger = log.New("main")
+
+	logger.Info("reading environment")
+
+	quser = os.Getenv("RUNLOG_HTTP_USER")
+	if quser == "" {
+		quser = "runlog_devel"
+		logger.Debugf("RUNLOG_HTTP_USER empty, defaulting to %v", quser)
+	}
+
+	qpass = os.Getenv("RUNLOG_HTTP_PASS")
+	if qpass == "" {
+		qpass = "runlog_devel"
+		logger.Debugf("RUNLOG_HTTP_PASS empty, defaulting to %v", qpass)
+	}
+}
+
 func main() {
-	fmt.Println("opening file...")
+	logger.Info("booting runlog query service")
 
-	f, err := os.Open("logstash/tasklog/1.log")
+	srv, err := http.NewServer(quser, qpass)
 	if err != nil {
-		panic(err)
+		logger.CloneWith(map[string]interface{}{"error": err}).
+			Fatal("unable to start server")
 	}
 
-	err = follow(os.Stdout, f)
-	if err != nil {
-		panic(err)
-	}
+	logger.Fatal(srv.ListenAndServe())
+
+	// fmt.Println("opening file...")
+
+	// f, err := os.Open("logstash/tasklog/1.log")
+	// if err != nil {
+	// 	panic(err)
+	// }
+
+	// err = follow(os.Stdout, f)
+	// if err != nil {
+	// 	panic(err)
+	// }
 }
 
 func follow(w io.Writer, r io.Reader) error {
