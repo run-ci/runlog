@@ -28,6 +28,7 @@ func NewServer(user, pass string) (*Server, error) {
 	mux := http.NewServeMux()
 
 	mux.Handle("/", http.HandlerFunc(handleRoot))
+	mux.Handle("/log/", http.HandlerFunc(handleGetLog))
 
 	return &Server{
 		user: user,
