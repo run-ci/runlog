@@ -14,8 +14,6 @@ import (
 func handleRoot(rw http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
-		logger.Debugf("handling GET %v", req.URL)
-
 		rw.WriteHeader(http.StatusNoContent)
 		return
 	default:
@@ -29,8 +27,6 @@ func handleRoot(rw http.ResponseWriter, req *http.Request) {
 func (s *Server) handleGetLog(rw http.ResponseWriter, req *http.Request) {
 	switch req.Method {
 	case http.MethodGet:
-		logger.Debugf("handling GET %v", req.URL)
-
 		task, err := getTaskID(req.URL.String())
 		if err != nil {
 			logger.CloneWith(map[string]interface{}{

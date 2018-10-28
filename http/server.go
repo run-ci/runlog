@@ -51,8 +51,8 @@ func NewServer(user, pass, logsdir string) (*Server, error) {
 		},
 	}
 
-	mux.Handle("/", http.HandlerFunc(handleRoot))
-	mux.Handle("/log/", http.HandlerFunc(srv.handleGetLog))
+	mux.Handle("/", chain(handleRoot, reqLog))
+	mux.Handle("/log/", chain(srv.handleGetLog, reqLog))
 
 	return srv, nil
 }
