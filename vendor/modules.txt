@@ -1,3 +1,5 @@
+# github.com/google/uuid v1.0.0
+github.com/google/uuid
 # github.com/gorilla/websocket v1.4.0
 github.com/gorilla/websocket
 # github.com/hpcloud/tail v1.0.0

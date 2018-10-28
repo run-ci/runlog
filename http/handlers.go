@@ -12,6 +12,9 @@ import (
 )
 
 func handleRoot(rw http.ResponseWriter, req *http.Request) {
+	reqid := req.Context().Value(keyReqID).(string)
+	logger := logger.WithField("request_id", reqid)
+
 	switch req.Method {
 	case http.MethodGet:
 		rw.WriteHeader(http.StatusNoContent)
@@ -25,6 +28,11 @@ func handleRoot(rw http.ResponseWriter, req *http.Request) {
 }
 
 func (s *Server) handleGetLog(rw http.ResponseWriter, req *http.Request) {
+	reqid := req.Context().Value(keyReqID).(string)
+	logger := logger.CloneWith(map[string]interface{}{
+		"request_id": reqid,
+	})
+
 	switch req.Method {
 	case http.MethodGet:
 		task, err := getTaskID(req.URL.String())
