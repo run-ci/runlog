@@ -8,7 +8,7 @@ import (
 	"github.com/run-ci/runlog/http"
 )
 
-var quser, qpass string
+var quser, qpass, logsdir string
 var logger *log.Logger
 
 func init() {
@@ -28,12 +28,17 @@ func init() {
 		qpass = "runlog_devel"
 		logger.Debugf("RUNLOG_HTTP_PASS empty, defaulting to %v", qpass)
 	}
+
+	logsdir = os.Getenv("RUNLOG_LOGS_DIR")
+	if logsdir == "" {
+		logger.Fatal("must set RUNLOG_LOGS_DIR")
+	}
 }
 
 func main() {
 	logger.Info("booting runlog query service")
 
-	srv, err := http.NewServer(quser, qpass)
+	srv, err := http.NewServer(quser, qpass, logsdir)
 	if err != nil {
 		logger.CloneWith(map[string]interface{}{"error": err}).
 			Fatal("unable to start server")
