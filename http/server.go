@@ -3,6 +3,8 @@ package http
 import (
 	"errors"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 // Server is an HTTP server that can serve requests for logs.
@@ -10,6 +12,8 @@ type Server struct {
 	user    string
 	pass    string
 	logsdir string
+
+	upg websocket.Upgrader
 
 	*http.Server
 }
@@ -35,6 +39,11 @@ func NewServer(user, pass, logsdir string) (*Server, error) {
 		user:    user,
 		pass:    pass,
 		logsdir: logsdir,
+
+		upg: websocket.Upgrader{
+			ReadBufferSize:  1024,
+			WriteBufferSize: 1024,
+		},
 
 		Server: &http.Server{
 			Handler: mux,

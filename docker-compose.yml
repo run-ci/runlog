@@ -11,6 +11,8 @@ services:
     - "./logstash/tasklog/:/var/run/run-ci/tasklog/"
     ports:
     - "12345:12345"
+    logging:
+      driver: none
   query:
     image: ubuntu:18.04
     volumes:
@@ -20,7 +22,10 @@ services:
     - ./runlog:/bin/runlog
     environment:
       RUNLOG_LOG_LEVEL: debug
-      RUNLOG_LOGS_DIR: /var/run/run-ci/tasklog/
+      # This must be the same path as the mount point above but without the
+      # trailing slash, because the server is connecting the path with the 
+      # task id using a slash.
+      RUNLOG_LOGS_DIR: /var/run/run-ci/tasklog
     command: /bin/runlog
     ports:
     - 7777:7777
