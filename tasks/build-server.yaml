@@ -1,8 +1,10 @@
 ---
-summary: Build `runlog`.
+summary: Build the `runlog` server.
 
 description: |
-  The `build` task builds `runlog` in the current directory.
+  The `build-server` task builds the `runlog` server from the
+  main package defined in `./cmd/server/`, leaving the binary
+  in the current working directory as `runlogd`.
 
   This task runs in a Linux container. If working on Mac OS
   make sure to set GOOS appropriately.
@@ -11,7 +13,7 @@ image: golang:1.11-stretch
 
 mount: /go/src/github.com/run-ci/runlog
 
-command: go build -v
+command: go build -v -o runlogd ./cmd/server/
 
 arguments:
   GOOS:

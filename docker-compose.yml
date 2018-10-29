@@ -19,13 +19,13 @@ services:
     # This must match with the ingest service's configuration above, as
     # well as the value of RUNLOG_LOGS_DIR.
     - ./logstash/tasklog/:/var/run/run-ci/tasklog/
-    - ./runlog:/bin/runlog
+    - ./runlogd:/bin/runlogd
     environment:
       RUNLOG_LOG_LEVEL: debug
       # This must be the same path as the mount point above but without the
       # trailing slash, because the server is connecting the path with the 
       # task id using a slash.
       RUNLOG_LOGS_DIR: /var/run/run-ci/tasklog
-    command: /bin/runlog
+    command: /bin/runlogd
     ports:
     - 7777:7777
