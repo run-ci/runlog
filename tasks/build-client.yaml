@@ -1,8 +1,10 @@
 ---
-summary: Build `runlog`.
+summary: Build the `runlog` client.
 
 description: |
-  The `build` task builds `runlog` in the current directory.
+  The `build-client` task builds the `runlog` client from the
+  main package defined in `./cmd/client/`, leaving the binary
+  in the current working directory as `runlogq`.
 
   This task runs in a Linux container. If working on Mac OS
   make sure to set GOOS appropriately.
@@ -11,7 +13,7 @@ image: golang:1.11-stretch
 
 mount: /go/src/github.com/run-ci/runlog
 
-command: go build -v
+command: go build -v -o runlogq ./cmd/client/
 
 arguments:
   GOOS:

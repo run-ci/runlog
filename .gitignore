@@ -1,2 +1,3 @@
 logstash/tasklog/*.log
-runlog
+runlogd
+runlogq

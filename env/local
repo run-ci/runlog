@@ -1,4 +1,8 @@
 export TEST_LOG=$(cat examples/task-log.json)
 
+# TODO: make these consistent (should be RUNLOGD...)
 export RUNLOG_LOGS_DIR=/var/run/run-ci/tasklog/
 export RUNLOG_LOG_LEVEL=debug
+
+export RUNLOGD_USER=runlog_devel
+export RUNLOGD_PASS=runlog_devel
