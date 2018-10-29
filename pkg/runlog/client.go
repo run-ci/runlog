@@ -2,6 +2,7 @@ package runlog
 
 import (
 	"encoding/base64"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -72,15 +73,19 @@ func (c *Client) GetLog(taskID int, w io.Writer) error {
 	}
 
 	conn, resp, err := websocket.DefaultDialer.Dial(url, h)
+	if resp == nil {
+		if err != nil {
+			return err
+		}
+
+		return errors.New("got nil response")
+	}
+
 	if resp.StatusCode == http.StatusUnauthorized {
 		return StatusError{
 			Message:    "unauthorized",
 			StatusCode: resp.StatusCode,
 		}
-	}
-
-	if err != nil {
-		return err
 	}
 
 	for {

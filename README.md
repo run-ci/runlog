@@ -19,6 +19,10 @@ run build-client
 
 # get logs
 ./runlogq get log 1
+
+# test log ingest/stream (if it doesn't work right away,
+# give it a minute because logstash takes a bit to start)
+echo $TEST_LOG | nc localhost 12345
 ```
 
 ## Architecture
