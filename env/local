@@ -1,1 +1,4 @@
 export TEST_LOG=$(cat examples/task-log.json)
+
+export RUNLOG_LOGS_DIR=/var/run/run-ci/tasklog/
+export RUNLOG_LOG_LEVEL=debug

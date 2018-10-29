@@ -2,10 +2,30 @@
 version: "3"
 
 services:
-  logstash:
+  ingest:
     image: docker.elastic.co/logstash/logstash:6.4.2
     volumes:
     - "./logstash/pipeline/:/usr/share/logstash/pipeline/"
+    # This must match with the ingest service's configuration above, as
+    # well as the value of RUNLOG_LOGS_DIR.
     - "./logstash/tasklog/:/var/run/run-ci/tasklog/"
     ports:
     - "12345:12345"
+    logging:
+      driver: none
+  query:
+    image: ubuntu:18.04
+    volumes:
+    # This must match with the ingest service's configuration above, as
+    # well as the value of RUNLOG_LOGS_DIR.
+    - ./logstash/tasklog/:/var/run/run-ci/tasklog/
+    - ./runlog:/bin/runlog
+    environment:
+      RUNLOG_LOG_LEVEL: debug
+      # This must be the same path as the mount point above but without the
+      # trailing slash, because the server is connecting the path with the 
+      # task id using a slash.
+      RUNLOG_LOGS_DIR: /var/run/run-ci/tasklog
+    command: /bin/runlog
+    ports:
+    - 7777:7777
