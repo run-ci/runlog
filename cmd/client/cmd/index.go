@@ -1,50 +1,39 @@
-// Copyright © 2018 NAME HERE <EMAIL ADDRESS>
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package cmd
 
 import (
 	"fmt"
+	"os"
 
+	"github.com/run-ci/runlog/pkg/runlog"
 	"github.com/spf13/cobra"
 )
 
 // indexCmd represents the index command
 var indexCmd = &cobra.Command{
 	Use:   "index",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "GET / on runlogd",
+	Long: `
+"get index" is for hitting the / route with GET.
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+This doesn't really return anything useful. It's only intended use
+is to see if the server is even running or accessible.
+`,
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("index called")
+		addr := os.Getenv("RUNLOGD_URL")
+		if addr == "" {
+			addr = "http://localhost:7777"
+		}
+
+		client := runlog.NewClient(addr)
+
+		err := client.GetRoot()
+		if err != nil {
+			fmt.Printf("got error: %v", err)
+			os.Exit(1)
+		}
 	},
 }
 
 func init() {
 	getCmd.AddCommand(indexCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// indexCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// indexCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
