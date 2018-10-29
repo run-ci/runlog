@@ -1,8 +1,12 @@
 package runlog
 
 import (
+	"encoding/base64"
 	"fmt"
+	"io"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
 
 type StatusError struct {
@@ -11,25 +15,32 @@ type StatusError struct {
 }
 
 func (e StatusError) Error() string {
-	return fmt.Sprintf("got wrong status code %v", e.StatusCode)
+	return fmt.Sprintf("%v: %v", e.StatusCode, e.Message)
 }
 
 type Client struct {
 	addr string
+	user string
+	pass string
 
 	client *http.Client
+	upg    *websocket.Upgrader
 }
 
-func NewClient(addr string) *Client {
+func NewClient(addr, user, pass string) *Client {
 	return &Client{
 		addr: addr,
+		user: user,
+		pass: pass,
 
 		client: http.DefaultClient,
 	}
 }
 
-func (c Client) GetRoot() error {
-	req, err := http.NewRequest(http.MethodGet, c.addr, nil)
+func (c *Client) GetRoot() error {
+	url := fmt.Sprintf("http://%v", c.addr)
+
+	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return err
 	}
@@ -43,6 +54,50 @@ func (c Client) GetRoot() error {
 		return StatusError{
 			Message:    err.Error(),
 			StatusCode: resp.StatusCode,
+		}
+	}
+
+	return nil
+}
+
+func (c *Client) GetLog(taskID int, w io.Writer) error {
+	url := fmt.Sprintf("ws://%v/log/%v", c.addr, taskID)
+
+	auth := base64.StdEncoding.EncodeToString([]byte(c.user + ":" + c.pass))
+
+	h := http.Header{
+		"Authorization": []string{
+			fmt.Sprintf("Basic %v", auth),
+		},
+	}
+
+	conn, resp, err := websocket.DefaultDialer.Dial(url, h)
+	if resp.StatusCode == http.StatusUnauthorized {
+		return StatusError{
+			Message:    "unauthorized",
+			StatusCode: resp.StatusCode,
+		}
+	}
+
+	if err != nil {
+		return err
+	}
+
+	for {
+		typ, msg, err := conn.ReadMessage()
+		if err != nil {
+			return err
+		}
+
+		if typ == websocket.CloseMessage {
+			conn.Close()
+
+			break
+		}
+
+		_, err = w.Write(msg)
+		if err != nil {
+			return err
 		}
 	}
 

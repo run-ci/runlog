@@ -24,7 +24,8 @@ is to see if the server is even running or accessible.
 			addr = "http://localhost:7777"
 		}
 
-		client := runlog.NewClient(addr)
+		// This request doesn't require auth.
+		client := runlog.NewClient(addr, "", "")
 
 		err := client.GetRoot()
 		if err != nil {
