@@ -1,0 +1,5 @@
+export RUNLOG_LOGS_DIR=./logs
+export RUNLOG_CAPATH=./devcerts/rootCA.pem
+export RUNLOG_CERTPATH=./devcerts/runlog.crt
+export RUNLOG_KEYPATH=./devcerts/runlog.key
+

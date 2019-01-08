@@ -1,0 +1,17 @@
+---
+summary: Run all unit tests.
+
+description: |
+  The `test` task runs all the project's unit tests.
+
+  This task runs in a Linux container. If working on Mac OS
+  make sure to set GOOS appropriately.
+
+image: relay-dev
+
+command: go test ./...
+
+arguments:
+  GOOS:
+    description: Platform to build for.
+    default: linux

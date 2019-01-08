@@ -1,0 +1,30 @@
+---
+summary: Vendor Go dependencies.
+
+description: |
+  Go's new module system is moving the tooling away from vendoring and towards
+  downloading packages from immutable proxy caches. The issue this raises with
+  using tasks is tasks run in ephemeral containers, which means the module
+  cache needs to be warmed on every task run.
+
+  To get around this, the task files use a custom image, `runlog-dev`, built
+  using `Dockerfile.dev`. This does the job of warming the cache and bundling
+  it in the container image to be used by other tasks.
+
+  The `runlog-dev` image is built using this task.
+
+  If package dependencies change, the task files will have to download only
+  the changes on every run. If that starts to take too long, just run this
+  task again to rebuild the image and save the new dependencies.
+
+image: docker:latest
+
+command: docker build -t runlog-dev -f Dockerfile.dev .
+
+arguments:
+  GOOS:
+    description: Platform to build for.
+    default: linux
+  GO111MODULE:
+    description: Enable Go modules.
+    default: on

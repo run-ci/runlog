@@ -1,0 +1,19 @@
+---
+summary: Build the runlog container log server.
+
+description: |
+  The `build` task compiles the runlog server, dropping the
+  binary in the `build` directory.
+
+  This task runs in a Linux container. If working on Mac OS
+  make sure to set GOOS appropriately.
+
+image: runlog-dev
+
+command: go build -o build/runlog -v ./cmd/server
+
+arguments:
+  GOOS:
+    description: Platform to build for.
+    default: linux
+
