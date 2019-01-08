@@ -45,12 +45,6 @@ func init() {
 func main() {
 	logger.Info("booting runlog query service")
 
-	//srv, err := http.NewServer(quser, qpass, logsdir)
-	//if err != nil {
-	//logger.CloneWith(map[string]interface{}{"error": err}).
-	//Fatal("unable to start server")
-	//}
-
 	srv := runlog.Server{
 		Addr: ":9999",
 	}
