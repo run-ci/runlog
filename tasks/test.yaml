@@ -7,7 +7,7 @@ description: |
   This task runs in a Linux container. If working on Mac OS
   make sure to set GOOS appropriately.
 
-image: relay-dev
+image: runlog-dev
 
 command: go test ./...
 
