@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/run-ci/runlog"
 	"github.com/sirupsen/logrus"
 )
 
@@ -45,7 +44,7 @@ func init() {
 func main() {
 	logger.Info("booting runlog query service")
 
-	srv := runlog.Server{
+	srv := Server{
 		Addr: ":9999",
 	}
 
