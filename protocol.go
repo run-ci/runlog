@@ -51,3 +51,18 @@ func (p *Packet) Decode(buf []byte) error {
 
 	return nil
 }
+
+// Encode serializes the packet into the proper format, or returns an error
+// if there's an issue.
+func (p *Packet) Encode() ([]byte, error) {
+	// This size is computed by adding the byte length of the
+	// task ID, the byte length of the payload size and the
+	// byte length of the payload itself.
+	buf := make([]byte, 4+1+p.ByteLength)
+
+	binary.BigEndian.PutUint32(buf[0:4], p.TaskID)
+	buf[4] = p.ByteLength
+	copy(buf[5:4+1+p.ByteLength], p.Payload)
+
+	return buf, nil
+}

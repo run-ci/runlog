@@ -1,0 +1,19 @@
+---
+summary: Build the runlog client.
+
+description: |
+  The `build` task compiles runlogger, a runlog client, dropping the
+  binary in the `build` directory.
+
+  This task runs in a Linux container. If working on Mac OS
+  make sure to set GOOS appropriately.
+
+image: runlog-dev
+
+command: go build -o build/runlogger -v ./cmd/runlogger
+
+arguments:
+  GOOS:
+    description: Platform to build for.
+    default: linux
+

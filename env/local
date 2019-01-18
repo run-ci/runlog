@@ -3,3 +3,7 @@ export RUNLOG_CAPATH=./devcerts/rootCA.pem
 export RUNLOG_CERTPATH=./devcerts/runlog.crt
 export RUNLOG_KEYPATH=./devcerts/runlog.key
 
+export RUNLOGGER_CAPATH=$RUNLOG_CAPATH
+export RUNLOGGER_CERTPATH=$RUNLOG_CERTPATH
+export RUNLOGGER_KEYPATH=$RUNLOG_KEYPATH
+
