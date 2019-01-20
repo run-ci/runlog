@@ -45,7 +45,8 @@ func main() {
 	logger.Info("booting runlog query service")
 
 	srv := Server{
-		Addr: ":9999",
+		Addr:    ":9999",
+		LogsDir: logsdir,
 	}
 
 	cabuf, err := ioutil.ReadFile(capath)

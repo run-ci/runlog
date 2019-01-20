@@ -106,6 +106,8 @@ func (srv *Server) flushPacket(packet *runlog.Packet) error {
 	}
 
 	path := fmt.Sprintf("%v/%v.log", srv.LogsDir, packet.TaskID)
+	logger.Printf("writing logs to %v", path)
+
 	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0640)
 	if err != nil {
 		return err
