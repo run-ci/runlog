@@ -3,8 +3,11 @@ package main
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"errors"
+	"fmt"
 	"io"
 	"net"
+	"os"
 
 	"github.com/run-ci/runlog"
 )
@@ -23,6 +26,8 @@ type Server struct {
 
 	CertificateAuthority *x509.CertPool
 	Certificate          tls.Certificate
+
+	LogsDir string
 }
 
 // ListenAndServeTLS blocks serving logging requests and
@@ -76,6 +81,7 @@ func (srv *Server) ListenAndServeTLS() error {
 				err = packet.Decode(buf)
 				if err == runlog.ErrShortPacket {
 					logger.Printf("got short packet %+v", packet)
+					srv.flushPacket(&packet)
 
 					break
 				}
@@ -86,8 +92,32 @@ func (srv *Server) ListenAndServeTLS() error {
 				}
 
 				logger.Printf("got packet %+v", packet)
+				srv.flushPacket(&packet)
 			}
 
 		}(conn)
 	}
+}
+
+func (srv *Server) flushPacket(packet *runlog.Packet) error {
+	// Making the zero value useful.
+	if srv.LogsDir == "" {
+		srv.LogsDir = "."
+	}
+
+	path := fmt.Sprintf("%v/%v.log", srv.LogsDir, packet.TaskID)
+	f, err := os.OpenFile(path, os.O_CREATE|os.O_APPEND|os.O_RDWR, 0640)
+	if err != nil {
+		return err
+	}
+
+	n, err := f.Write(packet.Payload)
+	if err != nil {
+		return err
+	}
+	if n != int(packet.ByteLength) {
+		return errors.New("could not flush entire packet contents")
+	}
+
+	return nil
 }
